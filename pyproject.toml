@@ -30,3 +30,6 @@ classifiers = [
 "Homepage" = "https://github.com/yourusername/loglight"
 "Documentation" = "https://github.com/yourusername/loglight#readme"
 "Issue Tracker" = "https://github.com/yourusername/loglight/issues"
+
+[tool.poetry.dev-dependencies]  # if you use poetry
+pytest = "^7.0"
