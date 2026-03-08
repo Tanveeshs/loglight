@@ -8,6 +8,7 @@ import threading
 from loglight.config import LoggerConfig
 from loglight.handlers.ConsoleHandler import ConsoleHandler
 from loglight.masking import ValuePatternMasker, MaskingStrategy
+from loglight.routing import RouterHandler, RoutingConfig
 
 
 class Logger:
@@ -22,13 +23,17 @@ class Logger:
     # Context variable for request_id
     request_id_context: contextvars.ContextVar = contextvars.ContextVar('request_id', default=None)
 
-    def __init__(self,config: LoggerConfig = None, handler=None):
+    def __init__(self, config: LoggerConfig = None, handler=None):
         self.config = config or LoggerConfig()
         self.level = self.LEVELS.get(self.config.level, 20)
+
+        # Support both single handler (backward compatible) and multiple handlers
+        self.handlers = []
         if handler:
-            self.handler = handler
+            self.handlers.append(handler)
         else:
-            self.handler = ConsoleHandler(self.config.output)
+            self.handlers.append(ConsoleHandler(self.config.output))
+
         self._log_count = 0
         self._last_reset = time.time()
         self._lock = threading.Lock()
@@ -45,6 +50,47 @@ class Logger:
             enable_value_masking=self.config.enable_value_masking,
             partial_keep_chars=self.config.partial_keep_chars,
         )
+
+    def add_handler(self, handler, routing_config: RoutingConfig = None) -> None:
+        """Add a handler with optional routing configuration.
+
+        Args:
+            handler: Handler instance to add
+            routing_config: RoutingConfig to determine when to use this handler.
+                           If None, handler receives all logs.
+
+        Example:
+            # Handler for all logs
+            logger.add_handler(ConsoleHandler())
+
+            # Handler only for ERROR and CRITICAL
+            error_config = RoutingConfig([
+                RoutingRule(RoutingRuleType.LEVEL, value="ERROR")
+            ])
+            logger.add_handler(SlackHandler(webhook_url="..."), error_config)
+        """
+        if routing_config is not None:
+            handler = RouterHandler(handler, routing_config)
+        self.handlers.append(handler)
+
+    def remove_handler(self, handler) -> bool:
+        """Remove a handler.
+
+        Args:
+            handler: Handler instance to remove
+
+        Returns:
+            True if handler was removed, False if not found
+        """
+        try:
+            self.handlers.remove(handler)
+            return True
+        except ValueError:
+            return False
+
+    def clear_handlers(self) -> None:
+        """Clear all handlers."""
+        self.handlers.clear()
 
     def log(self, level, event, details=None, **extra):
         lvl_value = self.LEVELS.get(level.upper(), 20)
@@ -97,7 +143,19 @@ class Logger:
                 log_entry[field] = "***"
 
         serialized = self.config.serializer(log_entry)
-        self.handler.emit(serialized)
+
+        # Emit to all handlers
+        for handler in self.handlers:
+            try:
+                # Pass log_entry for routing-aware handlers
+                if isinstance(handler, RouterHandler):
+                    handler.emit(serialized, log_entry)
+                else:
+                    handler.emit(serialized)
+            except Exception as e:
+                # Log handler errors to stderr
+                import sys
+                print(f"Error in handler {handler.__class__.__name__}: {e}", file=sys.stderr)
 
     def debug(self, event, details=None, **extra):
         self.log("DEBUG", event, details, **extra)
