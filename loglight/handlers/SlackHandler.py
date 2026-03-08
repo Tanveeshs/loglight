@@ -1,5 +1,4 @@
 import sys
-import requests
 import json
 
 from loglight.handlers.BaseHandler import BaseHandler
@@ -14,11 +13,16 @@ class SlackHandler(BaseHandler):
         self.username = username
         self.icon_emoji = icon_emoji
         self.timeout = timeout
+        try:
+            import requests
+            self.requests = requests
+        except ImportError:
+            raise ImportError("requests is required for SlackHandler. Install with: pip install loglight[http]")
 
     def emit(self, log_str: str):
         try:
             log_entry = json.loads(log_str)
-            text = f"*[{log_entry.get('level', '')}]* {log_entry.get('event', '')}\n```{json.dumps(log_entry.get('details', {}), indent=2)}```"
+            text = f"*[{log_entry.get('level', '')}]* {log_entry.get('message', '')}\n```{json.dumps(log_entry.get('details', {}), indent=2)}```"
             payload = {
                 "text": text,
                 "username": self.username,
@@ -27,7 +31,7 @@ class SlackHandler(BaseHandler):
             if self.channel:
                 payload["channel"] = self.channel
 
-            response = requests.post(self.webhook_url, json=payload, timeout=self.timeout)
+            response = self.requests.post(self.webhook_url, json=payload, timeout=self.timeout)
             response.raise_for_status()
         except Exception as e:
 

@@ -15,7 +15,7 @@ def test_slack_handler_sends_formatted_message(mock_post):
 
     log_entry = {
         "level": "WARNING",
-        "event": "something_happened",
+        "message": "something_happened",
         "details": {"user": "alice", "action": "login"},
     }
     log_str = json.dumps(log_entry)

@@ -31,5 +31,10 @@ classifiers = [
 "Documentation" = "https://github.com/yourusername/loglight#readme"
 "Issue Tracker" = "https://github.com/yourusername/loglight/issues"
 
+[project.optional-dependencies]
+http = ["requests"]
+s3 = ["boto3"]
+kafka = ["kafka-python"]
+
 [tool.poetry.dev-dependencies]  # if you use poetry
 pytest = "^7.0"
