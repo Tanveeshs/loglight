@@ -33,13 +33,20 @@ class RotatingFileHandler(BaseHandler):
 
     def rotate(self):
         self.file.close()
+        # Windows os.rename fails if destination exists; remove the oldest backup
+        # first and use os.replace for atomic overwrite semantics across platforms.
+        oldest_backup = f"{self.file_path}.{self.backup_count}"
+        if os.path.exists(oldest_backup):
+            os.remove(oldest_backup)
+
         for i in range(self.backup_count - 1, 0, -1):
             sfn = f"{self.file_path}.{i}"
             dfn = f"{self.file_path}.{i + 1}"
             if os.path.exists(sfn):
-                os.rename(sfn, dfn)
+                os.replace(sfn, dfn)
         # Rename current log file to .1
-        os.rename(self.file_path, f"{self.file_path}.1")
+        if os.path.exists(self.file_path):
+            os.replace(self.file_path, f"{self.file_path}.1")
         # Reopen fresh log file
         self.file = open(self.file_path, self.mode, encoding="utf-8")
 
