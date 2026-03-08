@@ -25,11 +25,14 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Topic :: Software Development :: Logging",
 ]
+dependencies = [
+  "requests>=2.0.0",
+]
 
 [project.urls]
-"Homepage" = "https://github.com/yourusername/loglight"
-"Documentation" = "https://github.com/yourusername/loglight#readme"
-"Issue Tracker" = "https://github.com/yourusername/loglight/issues"
+"Homepage" = "https://github.com/tanveeshs/loglight"
+"Documentation" = "https://github.com/tanveeshs/loglight#readme"
+"Issue Tracker" = "https://github.com/tanveeshs/loglight/issues"
 
 [project.optional-dependencies]
 http = ["requests"]
