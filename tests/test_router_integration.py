@@ -156,7 +156,9 @@ class TestLoggerMultipleHandlers:
 
         # Handler 2: Only errors
         mock_handler2 = Mock()
-        error_config = RoutingConfig([RoutingRule(RoutingRuleType.LEVEL, value="ERROR")])
+        error_config = RoutingConfig(
+            [RoutingRule(RoutingRuleType.LEVEL, value="ERROR")]
+        )
         logger.add_handler(mock_handler2, error_config)
 
         # Log info
@@ -178,7 +180,7 @@ class TestLoggerMultipleHandlers:
         mock_slack = Mock()
         payment_config = RoutingConfig(
             [RoutingRule(RoutingRuleType.EXACT, key="service", value="payment")],
-            name="payment_to_slack"
+            name="payment_to_slack",
         )
         logger.add_handler(mock_slack, payment_config)
 
@@ -186,7 +188,7 @@ class TestLoggerMultipleHandlers:
         mock_webhook = Mock()
         auth_config = RoutingConfig(
             [RoutingRule(RoutingRuleType.EXACT, key="service", value="auth")],
-            name="auth_to_webhook"
+            name="auth_to_webhook",
         )
         logger.add_handler(mock_webhook, auth_config)
 
@@ -211,7 +213,7 @@ class TestLoggerMultipleHandlers:
                 RoutingRule(RoutingRuleType.CONTAINS, key="operation", value="payment"),
             ],
             match_mode="all",
-            name="critical_payments"
+            name="critical_payments",
         )
         logger.add_handler(mock_slack, slack_config)
 
@@ -243,7 +245,7 @@ class TestLoggerMultipleHandlers:
 
         config = RoutingConfig(
             [RoutingRule(RoutingRuleType.FUNCTION, func=high_priority_filter)],
-            name="high_priority"
+            name="high_priority",
         )
         logger.add_handler(mock_handler, config)
 
@@ -277,4 +279,3 @@ class TestLoggerMultipleHandlers:
         # All handlers should be called despite exception in handler2
         assert mock_handler1.emit.called
         assert mock_handler3.emit.called
-

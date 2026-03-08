@@ -1,7 +1,8 @@
 import functools
 import inspect
-import traceback
 import time
+import traceback
+
 from loglight import log
 
 
@@ -19,7 +20,9 @@ def log_function(level="info"):
             except Exception as e:
                 log.error(f"Error in {func_name}", function=func_name, error=str(e))
                 raise
+
         return wrapper
+
     return decorator
 
 
@@ -31,13 +34,18 @@ def log_exceptions(level="error"):
                 return func(*args, **kwargs)
             except Exception as e:
                 # Structured exception logging
-                log.log(level, f"Exception in {func.__name__}",
-                        function=func.__name__,
-                        exception_type=type(e).__name__,
-                        exception_message=str(e),
-                        traceback=traceback.format_exc())
+                log.log(
+                    level,
+                    f"Exception in {func.__name__}",
+                    function=func.__name__,
+                    exception_type=type(e).__name__,
+                    exception_message=str(e),
+                    traceback=traceback.format_exc(),
+                )
                 raise
+
         return wrapper
+
     return decorator
 
 
@@ -51,14 +59,26 @@ def log_timing(level="info"):
                 result = func(*args, **kwargs)
                 end_time = time.time()
                 duration = end_time - start_time
-                log.log(level, f"Completed {func.__name__}", function=func.__name__, duration=duration)
+                log.log(
+                    level,
+                    f"Completed {func.__name__}",
+                    function=func.__name__,
+                    duration=duration,
+                )
                 return result
             except Exception as e:
                 end_time = time.time()
                 duration = end_time - start_time
-                log.error(f"Error in {func.__name__}", function=func.__name__, error=str(e), duration=duration)
+                log.error(
+                    f"Error in {func.__name__}",
+                    function=func.__name__,
+                    error=str(e),
+                    duration=duration,
+                )
                 raise
+
         return wrapper
+
     return decorator
 
 
@@ -73,7 +93,14 @@ def log_with_metadata(metadata=None):
                 log.info(f"Completed {func.__name__}", function=func.__name__, **extra)
                 return result
             except Exception as e:
-                log.error(f"Error in {func.__name__}", function=func.__name__, error=str(e), **extra)
+                log.error(
+                    f"Error in {func.__name__}",
+                    function=func.__name__,
+                    error=str(e),
+                    **extra,
+                )
                 raise
+
         return wrapper
+
     return decorator

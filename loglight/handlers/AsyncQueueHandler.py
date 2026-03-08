@@ -1,5 +1,5 @@
-import threading
 import queue
+import threading
 import time
 from typing import Callable
 
@@ -7,7 +7,13 @@ from loglight.handlers.BaseHandler import BaseHandler
 
 
 class AsyncQueueHandler(BaseHandler):
-    def __init__(self, underlying_handler, queue_size=1000, flush_interval=1.0, enable_internal_logging=True):
+    def __init__(
+        self,
+        underlying_handler,
+        queue_size=1000,
+        flush_interval=1.0,
+        enable_internal_logging=True,
+    ):
         super().__init__(enable_internal_logging)
         self.underlying_handler = underlying_handler
         self.queue = queue.Queue(maxsize=queue_size)

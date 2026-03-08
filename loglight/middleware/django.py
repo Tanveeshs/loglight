@@ -1,4 +1,5 @@
 import uuid
+
 from django.utils.deprecation import MiddlewareMixin
 
 from loglight.logger import Logger

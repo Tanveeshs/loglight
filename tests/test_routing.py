@@ -69,6 +69,7 @@ class TestRoutingRule:
 
     def test_function_match_success(self):
         """Test FUNCTION rule with matching function."""
+
         def custom_filter(log_entry):
             return log_entry.get("level") == "error"
 
@@ -78,6 +79,7 @@ class TestRoutingRule:
 
     def test_function_match_failure(self):
         """Test FUNCTION rule with non-matching function."""
+
         def custom_filter(log_entry):
             return log_entry.get("level") == "error"
 
@@ -87,6 +89,7 @@ class TestRoutingRule:
 
     def test_function_exception_handling(self):
         """Test FUNCTION rule when function raises exception."""
+
         def bad_filter(log_entry):
             raise ValueError("Filter error")
 
@@ -182,7 +185,9 @@ class TestRoutingConfig:
         """Test method chaining with add_rule."""
         config = (
             RoutingConfig()
-            .add_rule(RoutingRule(RoutingRuleType.EXACT, key="service", value="payment"))
+            .add_rule(
+                RoutingRule(RoutingRuleType.EXACT, key="service", value="payment")
+            )
             .add_rule(RoutingRule(RoutingRuleType.LEVEL, value="ERROR"))
         )
         assert len(config.rules) == 2
@@ -194,4 +199,3 @@ class TestRoutingConfig:
 
         config2 = RoutingConfig(name="error_routes")
         assert config2.name == "error_routes"
-

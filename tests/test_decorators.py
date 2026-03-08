@@ -1,6 +1,11 @@
 import pytest
 from unittest.mock import patch
-from loglight.decorators import log_function, log_exceptions, log_timing, log_with_metadata
+from loglight.decorators import (
+    log_function,
+    log_exceptions,
+    log_timing,
+    log_with_metadata,
+)
 from loglight import log
 
 
@@ -9,7 +14,7 @@ def test_log_function_decorator(capsys):
     def dummy_func():
         return "ok"
 
-    with patch('loglight.decorators.log.log') as mock_log:
+    with patch("loglight.decorators.log.log") as mock_log:
         result = dummy_func()
         assert result == "ok"
         assert mock_log.call_count == 2  # start and end
@@ -29,14 +34,14 @@ def test_log_timing_decorator(capsys):
     def timed_func():
         return "done"
 
-    with patch('loglight.decorators.log.log') as mock_log:
+    with patch("loglight.decorators.log.log") as mock_log:
         result = timed_func()
         assert result == "done"
         # Check that duration is logged
         calls = mock_log.call_args_list
         assert len(calls) == 2
         # Second call should have duration
-        assert 'duration' in calls[1][1]
+        assert "duration" in calls[1][1]
 
 
 def test_log_with_metadata_decorator(capsys):
@@ -44,12 +49,12 @@ def test_log_with_metadata_decorator(capsys):
     def meta_func():
         return "meta"
 
-    with patch('loglight.decorators.log.info') as mock_info:
+    with patch("loglight.decorators.log.info") as mock_info:
         result = meta_func()
         assert result == "meta"
         calls = mock_info.call_args_list
         assert len(calls) == 2
-        assert calls[0][1]['component'] == "test"
+        assert calls[0][1]["component"] == "test"
 
 
 def test_log_function_decorator_with_level(capsys):
@@ -57,7 +62,7 @@ def test_log_function_decorator_with_level(capsys):
     def debug_func():
         return "debug"
 
-    with patch('loglight.decorators.log.log') as mock_log:
+    with patch("loglight.decorators.log.log") as mock_log:
         result = debug_func()
         assert result == "debug"
         calls = mock_log.call_args_list
@@ -69,7 +74,7 @@ def test_log_timing_decorator_exception(capsys):
     def failing_timed_func():
         raise RuntimeError("timed error")
 
-    with patch('loglight.decorators.log.error') as mock_error:
+    with patch("loglight.decorators.log.error") as mock_error:
         with pytest.raises(RuntimeError):
             failing_timed_func()
         mock_error.assert_called_once()
@@ -89,7 +94,7 @@ def test_log_with_metadata_multiple_calls(capsys):
     def multi_func():
         pass
 
-    with patch('loglight.decorators.log.info') as mock_info:
+    with patch("loglight.decorators.log.info") as mock_info:
         multi_func()
         multi_func()
         assert mock_info.call_count == 4  # 2 per call

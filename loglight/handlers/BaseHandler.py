@@ -1,5 +1,5 @@
-import sys
 import json
+import sys
 
 
 class BaseHandler:
@@ -51,12 +51,13 @@ class BaseHandler:
             details = context or {}
             details["error"] = str(error)
             if not self.internal_logger:
-                from loglight.logger import Logger
                 from loglight.config import LoggerConfig
                 from loglight.handlers.ConsoleHandler import ConsoleHandler
+                from loglight.logger import Logger
+
                 self.internal_logger = Logger(
                     config=LoggerConfig(level="ERROR"),
-                    handler=ConsoleHandler(stream=sys.stderr)
+                    handler=ConsoleHandler(stream=sys.stderr),
                 )
             details = context or {}
             details["error"] = str(error)

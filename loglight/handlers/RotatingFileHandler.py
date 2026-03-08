@@ -6,7 +6,14 @@ from loglight.handlers.BaseHandler import BaseHandler
 
 
 class RotatingFileHandler(BaseHandler):
-    def __init__(self, file_path, max_bytes=10 * 1024 * 1024, backup_count=5, mode="a", enable_internal_logging=True):
+    def __init__(
+        self,
+        file_path,
+        max_bytes=10 * 1024 * 1024,
+        backup_count=5,
+        mode="a",
+        enable_internal_logging=True,
+    ):
         super().__init__(enable_internal_logging)
         self.file_path = file_path
         self.max_bytes = max_bytes

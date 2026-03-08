@@ -37,8 +37,7 @@ class TestRealWorldScenarios:
 
         # Slack: Only ERROR and CRITICAL
         slack_config = RoutingConfig(
-            [RoutingRule(RoutingRuleType.LEVEL, value="ERROR")],
-            name="slack_errors"
+            [RoutingRule(RoutingRuleType.LEVEL, value="ERROR")], name="slack_errors"
         )
         logger.add_handler(slack_handler, slack_config)
 
@@ -98,14 +97,14 @@ class TestRealWorldScenarios:
         # Payment service handler
         payment_config = RoutingConfig(
             [RoutingRule(RoutingRuleType.EXACT, key="service", value="payment")],
-            name="payment_logs"
+            name="payment_logs",
         )
         payment_logger.add_handler(slack_handler, payment_config)
 
         # Auth service handler
         auth_config = RoutingConfig(
             [RoutingRule(RoutingRuleType.EXACT, key="service", value="auth")],
-            name="auth_logs"
+            name="auth_logs",
         )
         auth_logger.add_handler(webhook_handler, auth_config)
 
@@ -150,23 +149,27 @@ class TestRealWorldScenarios:
 
         # Database error handler
         db_config = RoutingConfig(
-            [RoutingRule(
-                RoutingRuleType.REGEX,
-                key="message",
-                pattern=r"(?i)database|sql|query"
-            )],
-            name="db_errors"
+            [
+                RoutingRule(
+                    RoutingRuleType.REGEX,
+                    key="message",
+                    pattern=r"(?i)database|sql|query",
+                )
+            ],
+            name="db_errors",
         )
         logger.add_handler(db_handler, db_config)
 
         # API error handler
         api_config = RoutingConfig(
-            [RoutingRule(
-                RoutingRuleType.REGEX,
-                key="message",
-                pattern=r"(?i)api|endpoint|http"
-            )],
-            name="api_errors"
+            [
+                RoutingRule(
+                    RoutingRuleType.REGEX,
+                    key="message",
+                    pattern=r"(?i)api|endpoint|http",
+                )
+            ],
+            name="api_errors",
         )
         logger.add_handler(api_handler, api_config)
 
@@ -215,21 +218,21 @@ class TestRealWorldScenarios:
         # High priority handler
         high_config = RoutingConfig(
             [RoutingRule(RoutingRuleType.EXACT, key="priority", value="high")],
-            name="high_priority"
+            name="high_priority",
         )
         logger.add_handler(high_handler, high_config)
 
         # Medium priority handler
         medium_config = RoutingConfig(
             [RoutingRule(RoutingRuleType.EXACT, key="priority", value="medium")],
-            name="medium_priority"
+            name="medium_priority",
         )
         logger.add_handler(medium_handler, medium_config)
 
         # Low priority handler
         low_config = RoutingConfig(
             [RoutingRule(RoutingRuleType.EXACT, key="priority", value="low")],
-            name="low_priority"
+            name="low_priority",
         )
         logger.add_handler(low_handler, low_config)
 
@@ -282,7 +285,7 @@ class TestRealWorldScenarios:
                 RoutingRule(RoutingRuleType.EXACT, key="service", value="payment"),
             ],
             match_mode="all",
-            name="payment_errors_to_slack"
+            name="payment_errors_to_slack",
         )
         payment_logger.add_handler(slack_handler, slack_config)
 
@@ -293,7 +296,7 @@ class TestRealWorldScenarios:
                 RoutingRule(RoutingRuleType.EXACT, key="service", value="auth"),
             ],
             match_mode="all",
-            name="auth_errors_to_webhook"
+            name="auth_errors_to_webhook",
         )
         auth_logger.add_handler(webhook_handler, webhook_config)
 
@@ -338,22 +341,25 @@ class TestRealWorldScenarios:
         def is_sensitive(log_entry):
             """Check if log contains sensitive data."""
             message = log_entry.get("message", "").lower()
-            return any(word in message for word in ["password", "secret", "token", "key"])
+            return any(
+                word in message for word in ["password", "secret", "token", "key"]
+            )
 
         # External handler: Non-sensitive logs only
         external_config = RoutingConfig(
-            [RoutingRule(
-                RoutingRuleType.FUNCTION,
-                func=lambda log: not is_sensitive(log)
-            )],
-            name="external_safe_logs"
+            [
+                RoutingRule(
+                    RoutingRuleType.FUNCTION, func=lambda log: not is_sensitive(log)
+                )
+            ],
+            name="external_safe_logs",
         )
         logger.add_handler(external_handler, external_config)
 
         # Sensitive handler: Sensitive logs only
         sensitive_config = RoutingConfig(
             [RoutingRule(RoutingRuleType.FUNCTION, func=is_sensitive)],
-            name="sensitive_logs"
+            name="sensitive_logs",
         )
         logger.add_handler(sensitive_handler, sensitive_config)
 
@@ -397,15 +403,13 @@ class TestRealWorldScenarios:
 
         # Slack: Errors only
         slack_config = RoutingConfig(
-            [RoutingRule(RoutingRuleType.LEVEL, value="ERROR")],
-            name="errors_to_slack"
+            [RoutingRule(RoutingRuleType.LEVEL, value="ERROR")], name="errors_to_slack"
         )
         logger.add_handler(slack_handler, slack_config)
 
         # Email: Errors only
         email_config = RoutingConfig(
-            [RoutingRule(RoutingRuleType.LEVEL, value="ERROR")],
-            name="errors_to_email"
+            [RoutingRule(RoutingRuleType.LEVEL, value="ERROR")], name="errors_to_email"
         )
         logger.add_handler(email_handler, email_config)
 
@@ -419,4 +423,3 @@ class TestRealWorldScenarios:
         assert len(slack_logs) == 1
         assert len(email_logs) == 1
         assert len(file_logs) == 2
-

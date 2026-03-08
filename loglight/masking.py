@@ -7,12 +7,13 @@ in log statements. Supports built-in patterns, custom patterns, and configuratio
 """
 
 import re
-from typing import Any, Dict, List, Optional, Pattern, Union
 from enum import Enum
+from typing import Any, Dict, List, Optional, Pattern, Union
 
 
 class MaskingStrategy(Enum):
     """Different strategies for masking sensitive data."""
+
     FULL = "***"  # Replace with asterisks
     PARTIAL = "PARTIAL"  # Show first/last few chars
     HASH = "HASH"  # Replace with hash representation
@@ -35,40 +36,38 @@ class FieldMasker:
     # Built-in patterns for common sensitive fields
     BUILT_IN_PATTERNS = {
         # Authentication & Credentials
-        'password': r'(?i)^(password|passwd|pwd)$',
-        'api_key': r'(?i)^(api_key|apikey|api-key)$',
-        'secret': r'(?i)^(secret|client_secret)$',
-        'token': r'(?i)^(token|auth_token|access_token|refresh_token)$',
-        'bearer': r'(?i)^(bearer|authorization)$',
-
+        "password": r"(?i)^(password|passwd|pwd)$",
+        "api_key": r"(?i)^(api_key|apikey|api-key)$",
+        "secret": r"(?i)^(secret|client_secret)$",
+        "token": r"(?i)^(token|auth_token|access_token|refresh_token)$",
+        "bearer": r"(?i)^(bearer|authorization)$",
         # Personal Information
-        'ssn': r'(?i)^(ssn|social_security_number)$',
-        'email': r'(?i)^(email|email_address|e_mail)$',
-        'phone': r'(?i)^(phone|phone_number|mobile|cell)$',
-
+        "ssn": r"(?i)^(ssn|social_security_number)$",
+        "email": r"(?i)^(email|email_address|e_mail)$",
+        "phone": r"(?i)^(phone|phone_number|mobile|cell)$",
         # Financial Information
-        'credit_card': r'(?i)^(credit_card|cc_number|card_number|creditcard)$',
-        'cvv': r'(?i)^(cvv|cvc|card_code)$',
-        'routing': r'(?i)^(routing_number|route_number)$',
-        'account': r'(?i)^(account_number|account_id)$',
-
+        "credit_card": r"(?i)^(credit_card|cc_number|card_number|creditcard)$",
+        "cvv": r"(?i)^(cvv|cvc|card_code)$",
+        "routing": r"(?i)^(routing_number|route_number)$",
+        "account": r"(?i)^(account_number|account_id)$",
         # Other Sensitive Data
-        'pin': r'(?i)^(pin|personal_id_number)$',
-        'passport': r'(?i)^(passport|passport_number)$',
-        'driver_license': r'(?i)^(driver_license|drivers_license|dl_number)$',
-        'oauth': r'(?i)^(oauth|oauth_token)$',
-        'private_key': r'(?i)^(private_key|privatekey)$',
+        "pin": r"(?i)^(pin|personal_id_number)$",
+        "passport": r"(?i)^(passport|passport_number)$",
+        "driver_license": r"(?i)^(driver_license|drivers_license|dl_number)$",
+        "oauth": r"(?i)^(oauth|oauth_token)$",
+        "private_key": r"(?i)^(private_key|privatekey)$",
     }
 
-    def __init__(self,
-                 enable_masking: bool = True,
-                 strategy: Union[MaskingStrategy, str] = MaskingStrategy.FULL,
-                 custom_patterns: Optional[Dict[str, str]] = None,
-                 patterns_to_use: Optional[List[str]] = None,
-                 enable_pattern_matching: bool = True,
-                 enable_nested_masking: bool = True,
-                 partial_keep_chars: int = 2,
-                 ):
+    def __init__(
+        self,
+        enable_masking: bool = True,
+        strategy: Union[MaskingStrategy, str] = MaskingStrategy.FULL,
+        custom_patterns: Optional[Dict[str, str]] = None,
+        patterns_to_use: Optional[List[str]] = None,
+        enable_pattern_matching: bool = True,
+        enable_nested_masking: bool = True,
+        partial_keep_chars: int = 2,
+    ):
         """
         Initialize the field masker.
 
@@ -240,16 +239,21 @@ class ValuePatternMasker(FieldMasker):
 
     # Value patterns for common sensitive data
     VALUE_PATTERNS = {
-        'credit_card': r'\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b',
-        'email': r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',
-        'ssn': r'\b\d{3}-\d{2}-\d{4}\b',
-        'phone': r'\b\d{3}[-.]?\d{3}[-.]?\d{4}\b',
-        'api_key': r'(?i)(api_key|apikey)["\']?\s*[:=]\s*["\']?[a-zA-Z0-9_-]{32,}',
-        'ipv4': r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b',
+        "credit_card": r"\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b",
+        "email": r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b",
+        "ssn": r"\b\d{3}-\d{2}-\d{4}\b",
+        "phone": r"\b\d{3}[-.]?\d{3}[-.]?\d{4}\b",
+        "api_key": r'(?i)(api_key|apikey)["\']?\s*[:=]\s*["\']?[a-zA-Z0-9_-]{32,}',
+        "ipv4": r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b",
     }
 
-    def __init__(self, *args, enable_value_masking: bool = False,
-                 value_patterns: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(
+        self,
+        *args,
+        enable_value_masking: bool = False,
+        value_patterns: Optional[Dict[str, str]] = None,
+        **kwargs,
+    ):
         """
         Initialize with value pattern masking.
 
@@ -327,5 +331,3 @@ class ValuePatternMasker(FieldMasker):
                 masked_data[key] = value
 
         return masked_data
-
-

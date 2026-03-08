@@ -24,6 +24,7 @@ def test_end_to_end_logging(capsys):
 
 def test_request_context(capsys):
     from loglight.logger import Logger
+
     config = LoggerConfig()
     logger = Logger(config=config, handler=ConsoleHandler())
 
@@ -70,6 +71,7 @@ def test_sampling_integration(capsys):
 
 def test_rate_limiting_integration(capsys):
     import time
+
     config = LoggerConfig(rate_limit=2)
     logger = log.__class__(config=config, handler=ConsoleHandler())
 

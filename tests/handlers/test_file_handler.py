@@ -19,7 +19,9 @@ def test_rotating_file_handler_rotates(tmp_path):
     log_file = tmp_path / "app.log"
     max_bytes = 100
     backup_count = 3
-    handler = RotatingFileHandler(str(log_file), max_bytes=max_bytes, backup_count=backup_count)
+    handler = RotatingFileHandler(
+        str(log_file), max_bytes=max_bytes, backup_count=backup_count
+    )
     for i in range(20):
         data = json.dumps({"msg": f"log_{i}", "num": i})
         handler.emit(data)
@@ -40,7 +42,9 @@ def test_rotating_file_handler_deletes_oldest(tmp_path):
     log_file = tmp_path / "rotate.log"
     max_bytes = 50
     backup_count = 2
-    handler = RotatingFileHandler(str(log_file), max_bytes=max_bytes, backup_count=backup_count)
+    handler = RotatingFileHandler(
+        str(log_file), max_bytes=max_bytes, backup_count=backup_count
+    )
 
     # Write enough logs to create 4 rotations (oldest backup should be deleted)
     for i in range(50):
@@ -59,7 +63,9 @@ def test_rotating_file_handler_handles_missing_files(tmp_path):
     log_file = tmp_path / "missing.log"
     max_bytes = 50
     backup_count = 3
-    handler = RotatingFileHandler(str(log_file), max_bytes=max_bytes, backup_count=backup_count)
+    handler = RotatingFileHandler(
+        str(log_file), max_bytes=max_bytes, backup_count=backup_count
+    )
 
     # Only create one backup file manually
     backup1 = tmp_path / "missing.log.1"

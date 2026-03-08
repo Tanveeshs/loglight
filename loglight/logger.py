@@ -1,13 +1,13 @@
 # loglight/logger.py
 import contextvars
-from datetime import datetime
 import random
-import time
 import threading
+import time
+from datetime import datetime
 
 from loglight.config import LoggerConfig
 from loglight.handlers.ConsoleHandler import ConsoleHandler
-from loglight.masking import ValuePatternMasker, MaskingStrategy
+from loglight.masking import MaskingStrategy, ValuePatternMasker
 from loglight.routing import RouterHandler, RoutingConfig
 
 
@@ -21,7 +21,9 @@ class Logger:
     }
 
     # Context variable for request_id
-    request_id_context: contextvars.ContextVar = contextvars.ContextVar('request_id', default=None)
+    request_id_context: contextvars.ContextVar = contextvars.ContextVar(
+        "request_id", default=None
+    )
 
     def __init__(self, config: LoggerConfig = None, handler=None):
         self.config = config or LoggerConfig()
@@ -50,6 +52,11 @@ class Logger:
             enable_value_masking=self.config.enable_value_masking,
             partial_keep_chars=self.config.partial_keep_chars,
         )
+
+    @property
+    def handler(self):
+        """Backward-compatible access to the primary handler."""
+        return self.handlers[0] if self.handlers else None
 
     def add_handler(self, handler, routing_config: RoutingConfig = None) -> None:
         """Add a handler with optional routing configuration.
@@ -155,7 +162,11 @@ class Logger:
             except Exception as e:
                 # Log handler errors to stderr
                 import sys
-                print(f"Error in handler {handler.__class__.__name__}: {e}", file=sys.stderr)
+
+                print(
+                    f"Error in handler {handler.__class__.__name__}: {e}",
+                    file=sys.stderr,
+                )
 
     def debug(self, event, details=None, **extra):
         self.log("DEBUG", event, details, **extra)

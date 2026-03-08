@@ -5,12 +5,13 @@ Handler routing mechanism for loglight.
 Allows flexible routing of logs to different handlers based on configurable rules.
 """
 
-from typing import Callable, Dict, List, Optional, Any
 from enum import Enum
+from typing import Any, Callable, Dict, List, Optional
 
 
 class RoutingRuleType(Enum):
     """Types of routing rules."""
+
     EXACT = "exact"  # Exact match of a key-value pair
     CONTAINS = "contains"  # Value contains a substring
     REGEX = "regex"  # Value matches a regex pattern
@@ -88,7 +89,11 @@ class RoutingRule:
             }
             log_level = log_entry.get("level", "INFO").upper()
             log_level_value = levels.get(log_level, 20)
-            threshold_value = levels.get(self.value.upper(), 20) if isinstance(self.value, str) else self.value
+            threshold_value = (
+                levels.get(self.value.upper(), 20)
+                if isinstance(self.value, str)
+                else self.value
+            )
             return log_level_value >= threshold_value
 
         return False
@@ -164,7 +169,9 @@ class RouterHandler:
             routing_config: RoutingConfig to determine when to use this handler
         """
         self.handler = handler
-        self.routing_config = routing_config or RoutingConfig()  # Default: route everything
+        self.routing_config = (
+            routing_config or RoutingConfig()
+        )  # Default: route everything
 
     def should_handle(self, log_entry: Dict) -> bool:
         """Check if this handler should process the log entry.
@@ -191,14 +198,16 @@ class RouterHandler:
 
         # Delegate to the actual handler
         try:
-            if hasattr(self.handler, 'emit'):
+            if hasattr(self.handler, "emit"):
                 self.handler.emit(log_str)
         except Exception as e:
             # Log to stderr but don't raise
             import sys
-            print(f"Error in handler {self.handler.__class__.__name__}: {e}", file=sys.stderr)
+
+            print(
+                f"Error in handler {self.handler.__class__.__name__}: {e}",
+                file=sys.stderr,
+            )
 
     def __repr__(self) -> str:
         return f"RouterHandler({self.handler.__class__.__name__}, routing={self.routing_config.name or 'default'})"
-
-

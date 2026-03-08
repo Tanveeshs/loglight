@@ -40,7 +40,7 @@ def test_console_handler_multiple_emits():
     handler.emit('{"first": "log"}')
     handler.emit('{"second": "log"}')
 
-    output = fake_stream.getvalue().strip().split('\n')
+    output = fake_stream.getvalue().strip().split("\n")
     assert len(output) == 2
     assert output[0] == '{"first": "log"}'
     assert output[1] == '{"second": "log"}'
@@ -50,9 +50,9 @@ def test_console_handler_empty_emit():
     fake_stream = io.StringIO()
     handler = ConsoleHandler(stream=fake_stream)
 
-    handler.emit('')
+    handler.emit("")
     output = fake_stream.getvalue().strip()
-    assert output == ''
+    assert output == ""
 
 
 def test_console_handler_with_newlines():
@@ -61,4 +61,4 @@ def test_console_handler_with_newlines():
 
     handler.emit('{"msg": "with\nnewline"}')
     output = fake_stream.getvalue()
-    assert output.endswith('\n')
+    assert output.endswith("\n")

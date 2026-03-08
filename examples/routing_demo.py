@@ -13,9 +13,9 @@ from loglight.config import LoggerConfig
 
 def example_1_error_level_routing():
     """Example 1: Route ERROR logs to Slack, all logs to console."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("EXAMPLE 1: Error Level Routing")
-    print("="*60)
+    print("=" * 60)
 
     logger = Logger()
     logger.clear_handlers()
@@ -26,9 +26,7 @@ def example_1_error_level_routing():
             print(f"  [SLACK] {log_str}")
 
     # Add Slack handler for errors only
-    slack_config = RoutingConfig([
-        RoutingRule(RoutingRuleType.LEVEL, value="ERROR")
-    ])
+    slack_config = RoutingConfig([RoutingRule(RoutingRuleType.LEVEL, value="ERROR")])
     logger.add_handler(MockSlackHandler(), slack_config)
 
     # Add console handler for all
@@ -43,9 +41,9 @@ def example_1_error_level_routing():
 
 def example_2_service_routing():
     """Example 2: Route different services to different handlers."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("EXAMPLE 2: Service-Based Routing")
-    print("="*60)
+    print("=" * 60)
 
     class MockPaymentHandler:
         def emit(self, log_str):
@@ -64,15 +62,15 @@ def example_2_service_routing():
         logger.clear_handlers()
 
     # Payment → Slack
-    payment_config = RoutingConfig([
-        RoutingRule(RoutingRuleType.EXACT, key="service", value="payment")
-    ])
+    payment_config = RoutingConfig(
+        [RoutingRule(RoutingRuleType.EXACT, key="service", value="payment")]
+    )
     payment_logger.add_handler(MockPaymentHandler(), payment_config)
 
     # Auth → Webhook
-    auth_config = RoutingConfig([
-        RoutingRule(RoutingRuleType.EXACT, key="service", value="auth")
-    ])
+    auth_config = RoutingConfig(
+        [RoutingRule(RoutingRuleType.EXACT, key="service", value="auth")]
+    )
     auth_logger.add_handler(MockAuthHandler(), auth_config)
 
     # All → Console
@@ -82,14 +80,16 @@ def example_2_service_routing():
     print("\nLogging messages:")
     payment_logger.info("Payment processed")
     auth_logger.info("User authenticated")
-    print("\nNote: Payment went to Payment handler, Auth to Auth handler, both to Console")
+    print(
+        "\nNote: Payment went to Payment handler, Auth to Auth handler, both to Console"
+    )
 
 
 def example_3_regex_routing():
     """Example 3: Route based on message patterns."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("EXAMPLE 3: Regex-Based Routing")
-    print("="*60)
+    print("=" * 60)
 
     class MockDBHandler:
         def emit(self, log_str):
@@ -103,23 +103,27 @@ def example_3_regex_routing():
     logger.clear_handlers()
 
     # Database errors
-    db_config = RoutingConfig([
-        RoutingRule(
-            RoutingRuleType.REGEX,
-            key="message",
-            pattern=r"(?i)database|sql|query|connection"
-        )
-    ])
+    db_config = RoutingConfig(
+        [
+            RoutingRule(
+                RoutingRuleType.REGEX,
+                key="message",
+                pattern=r"(?i)database|sql|query|connection",
+            )
+        ]
+    )
     logger.add_handler(MockDBHandler(), db_config)
 
     # API errors
-    api_config = RoutingConfig([
-        RoutingRule(
-            RoutingRuleType.REGEX,
-            key="message",
-            pattern=r"(?i)api|endpoint|http|timeout"
-        )
-    ])
+    api_config = RoutingConfig(
+        [
+            RoutingRule(
+                RoutingRuleType.REGEX,
+                key="message",
+                pattern=r"(?i)api|endpoint|http|timeout",
+            )
+        ]
+    )
     logger.add_handler(MockAPIHandler(), api_config)
 
     # All
@@ -134,9 +138,9 @@ def example_3_regex_routing():
 
 def example_4_complex_routing():
     """Example 4: Complex routing with AND/OR logic."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("EXAMPLE 4: Complex Routing (AND/OR Logic)")
-    print("="*60)
+    print("=" * 60)
 
     class MockCriticalHandler:
         def emit(self, log_str):
@@ -152,7 +156,7 @@ def example_4_complex_routing():
             RoutingRule(RoutingRuleType.EXACT, key="service", value="payment"),
         ],
         match_mode="all",
-        name="critical_payments"
+        name="critical_payments",
     )
     logger.add_handler(MockCriticalHandler(), critical_config)
 
@@ -167,9 +171,9 @@ def example_4_complex_routing():
 
 def example_5_custom_function_routing():
     """Example 5: Routing with custom functions."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("EXAMPLE 5: Custom Function Routing")
-    print("="*60)
+    print("=" * 60)
 
     class MockHighPriorityHandler:
         def emit(self, log_str):
@@ -183,9 +187,9 @@ def example_5_custom_function_routing():
         return log_entry.get("priority") == "high"
 
     # High priority only
-    priority_config = RoutingConfig([
-        RoutingRule(RoutingRuleType.FUNCTION, func=is_high_priority)
-    ])
+    priority_config = RoutingConfig(
+        [RoutingRule(RoutingRuleType.FUNCTION, func=is_high_priority)]
+    )
     logger.add_handler(MockHighPriorityHandler(), priority_config)
 
     logger.add_handler(ConsoleHandler())
@@ -199,9 +203,9 @@ def example_5_custom_function_routing():
 
 def example_6_sensitive_data_exclusion():
     """Example 6: Exclude sensitive data from external systems."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("EXAMPLE 6: Sensitive Data Exclusion")
-    print("="*60)
+    print("=" * 60)
 
     class MockExternalHandler:
         def emit(self, log_str):
@@ -217,9 +221,9 @@ def example_6_sensitive_data_exclusion():
         return not any(word in message for word in sensitive_words)
 
     # External: Non-sensitive logs only
-    external_config = RoutingConfig([
-        RoutingRule(RoutingRuleType.FUNCTION, func=is_not_sensitive)
-    ])
+    external_config = RoutingConfig(
+        [RoutingRule(RoutingRuleType.FUNCTION, func=is_not_sensitive)]
+    )
     logger.add_handler(MockExternalHandler(), external_config)
 
     logger.add_handler(ConsoleHandler())
@@ -233,9 +237,9 @@ def example_6_sensitive_data_exclusion():
 
 def example_7_multi_rule_or_logic():
     """Example 7: Multiple rules with OR logic (any mode)."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("EXAMPLE 7: Multiple Rules - OR Logic (Any Mode)")
-    print("="*60)
+    print("=" * 60)
 
     class MockAlertHandler:
         def emit(self, log_str):
@@ -251,7 +255,7 @@ def example_7_multi_rule_or_logic():
             RoutingRule(RoutingRuleType.EXACT, key="service", value="auth"),
         ],
         match_mode="any",  # OR logic
-        name="critical_services"
+        name="critical_services",
     )
     logger.add_handler(MockAlertHandler(), alert_config)
 
@@ -266,9 +270,9 @@ def example_7_multi_rule_or_logic():
 
 def example_8_monitoring_levels():
     """Example 8: Different handlers for different alert levels."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("EXAMPLE 8: Monitoring Levels")
-    print("="*60)
+    print("=" * 60)
 
     class MockWarningHandler:
         def emit(self, log_str):
@@ -282,15 +286,11 @@ def example_8_monitoring_levels():
     logger.clear_handlers()
 
     # Warning and above
-    warn_config = RoutingConfig([
-        RoutingRule(RoutingRuleType.LEVEL, value="WARNING")
-    ])
+    warn_config = RoutingConfig([RoutingRule(RoutingRuleType.LEVEL, value="WARNING")])
     logger.add_handler(MockWarningHandler(), warn_config)
 
     # Error and above (stricter)
-    error_config = RoutingConfig([
-        RoutingRule(RoutingRuleType.LEVEL, value="ERROR")
-    ])
+    error_config = RoutingConfig([RoutingRule(RoutingRuleType.LEVEL, value="ERROR")])
     logger.add_handler(MockErrorHandler(), error_config)
 
     logger.add_handler(ConsoleHandler())
@@ -314,7 +314,6 @@ if __name__ == "__main__":
     example_7_multi_rule_or_logic()
     example_8_monitoring_levels()
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("All examples completed!")
-    print("="*60)
-
+    print("=" * 60)

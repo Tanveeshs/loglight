@@ -17,7 +17,7 @@ def print_section(title):
     """Helper to print section titles."""
     print(f"\n{'='*60}")
     print(f"  {title}")
-    print('='*60)
+    print("=" * 60)
 
 
 def demo_default_masking():
@@ -25,6 +25,7 @@ def demo_default_masking():
     print_section("Demo 1: Default Masking (Enabled by Default)")
 
     from loglight.logger import Logger
+
     config = LoggerConfig()
     logger = Logger(config=config)
     output = StringIO()
@@ -50,26 +51,30 @@ def demo_multiple_sensitive_fields():
     print_section("Demo 2: Multiple Sensitive Fields")
 
     from loglight.logger import Logger
+
     config = LoggerConfig(enable_field_masking=True)
     logger = Logger(config=config)
     output = StringIO()
     logger.handler.emit = lambda x: output.write(x)
 
     print("\nLogging multiple sensitive fields:")
-    print("""log.info("API Request",
+    print(
+        """log.info("API Request",
     username="john",
     api_key="sk_live_abc123def456",
     password="super_secret",
     credit_card="4111-1111-1111-1111",
     email="john@example.com"
-)""")
+)"""
+    )
 
-    logger.info("API Request",
+    logger.info(
+        "API Request",
         username="john",
         api_key="sk_live_abc123def456",
         password="super_secret",
         credit_card="4111-1111-1111-1111",
-        email="john@example.com"
+        email="john@example.com",
     )
 
     log_output = output.getvalue().strip()
@@ -87,14 +92,13 @@ def demo_partial_strategy():
     print_section("Demo 3: Partial Masking Strategy")
 
     from loglight.logger import Logger
+
     config = LoggerConfig(
-        enable_field_masking=True,
-        masking_strategy='PARTIAL',
-        partial_keep_chars=3
+        enable_field_masking=True, masking_strategy="PARTIAL", partial_keep_chars=3
     )
     logger = Logger(config=config)
     output = StringIO()
-    logger.handler.emit = lambda x: output.write(x + '\n')
+    logger.handler.emit = lambda x: output.write(x + "\n")
 
     print("\nUsing PARTIAL strategy (shows first 3 and last 3 chars):")
     print('log.info("Auth", email="john@example.com", token="token_xyz789123")')
@@ -112,26 +116,26 @@ def demo_nested_masking():
     print_section("Demo 4: Nested Object Masking")
 
     from loglight.logger import Logger
+
     config = LoggerConfig(enable_field_masking=True, enable_nested_masking=True)
     logger = Logger(config=config)
     output = StringIO()
-    logger.handler.emit = lambda x: output.write(x + '\n')
+    logger.handler.emit = lambda x: output.write(x + "\n")
 
     print("\nLogging nested objects with sensitive fields:")
-    print("""log.info("Update User",
+    print(
+        """log.info("Update User",
     user={
         "name": "John Doe",
         "email": "john@example.com",
         "password": "secret123"
     }
-)""")
+)"""
+    )
 
-    logger.info("Update User",
-        user={
-            "name": "John Doe",
-            "email": "john@example.com",
-            "password": "secret123"
-        }
+    logger.info(
+        "Update User",
+        user={"name": "John Doe", "email": "john@example.com", "password": "secret123"},
     )
 
     result = json.loads(output.getvalue())
@@ -145,26 +149,30 @@ def demo_custom_patterns():
     print_section("Demo 5: Custom Masking Patterns")
 
     from loglight.logger import Logger
+
     config = LoggerConfig(enable_field_masking=True)
     logger = Logger(config=config)
     output = StringIO()
-    logger.handler.emit = lambda x: output.write(x + '\n')
+    logger.handler.emit = lambda x: output.write(x + "\n")
 
     print("\nAdding custom pattern for 'internal_secret':")
     print('log.add_masking_pattern("internal", r"(?i)^internal_.*$")')
     logger.add_masking_pattern("internal", r"(?i)^internal_.*$")
 
     print("\nLogging with custom sensitive fields:")
-    print("""log.info("Event",
+    print(
+        """log.info("Event",
     internal_id="secret_id_12345",
     internal_token="secret_token_xyz",
     public_id="public_123"
-)""")
+)"""
+    )
 
-    logger.info("Event",
+    logger.info(
+        "Event",
         internal_id="secret_id_12345",
         internal_token="secret_token_xyz",
-        public_id="public_123"
+        public_id="public_123",
     )
 
     result = json.loads(output.getvalue())
@@ -178,10 +186,11 @@ def demo_disable_masking():
     print_section("Demo 6: Disable Masking (for Debugging)")
 
     from loglight.logger import Logger
+
     config = LoggerConfig(enable_field_masking=True)
     logger = Logger(config=config)
     output = StringIO()
-    logger.handler.emit = lambda x: output.write(x + '\n')
+    logger.handler.emit = lambda x: output.write(x + "\n")
 
     print("\nDisabling masking for debugging:")
     print("log.disable_masking()")
@@ -216,6 +225,7 @@ def demo_get_patterns():
     print_section("Demo 7: View Active Masking Patterns")
 
     from loglight.logger import Logger
+
     config = LoggerConfig(enable_field_masking=True)
     logger = Logger(config=config)
 
@@ -224,10 +234,18 @@ def demo_get_patterns():
 
     # Group patterns by category
     categories = {
-        'Authentication': ['password', 'api_key', 'secret', 'token', 'bearer', 'oauth', 'private_key'],
-        'Personal': ['email', 'phone', 'ssn'],
-        'Financial': ['credit_card', 'cvv', 'routing', 'account'],
-        'Other': ['pin', 'passport', 'driver_license']
+        "Authentication": [
+            "password",
+            "api_key",
+            "secret",
+            "token",
+            "bearer",
+            "oauth",
+            "private_key",
+        ],
+        "Personal": ["email", "phone", "ssn"],
+        "Financial": ["credit_card", "cvv", "routing", "account"],
+        "Other": ["pin", "passport", "driver_license"],
     }
 
     for category, names in categories.items():
@@ -243,16 +261,15 @@ def demo_all_strategies():
     print_section("Demo 8: All Masking Strategies")
 
     from loglight.logger import Logger
-    strategies = ['FULL', 'PARTIAL', 'HASH', 'NULLIFY', 'FIRST_LAST']
+
+    strategies = ["FULL", "PARTIAL", "HASH", "NULLIFY", "FIRST_LAST"]
     secret_value = "super_secret_password_12345"
 
     print(f"\nMasking '{secret_value}' with different strategies:\n")
 
     for strategy in strategies:
         config = LoggerConfig(
-            enable_field_masking=True,
-            masking_strategy=strategy,
-            partial_keep_chars=2
+            enable_field_masking=True, masking_strategy=strategy, partial_keep_chars=2
         )
         logger = Logger(config=config)
         output = StringIO()
@@ -260,15 +277,15 @@ def demo_all_strategies():
 
         logger.info("Test", password=secret_value)
         result = json.loads(output.getvalue())
-        masked_value = result['password']
+        masked_value = result["password"]
 
         print(f"{strategy:12} → {masked_value}")
 
 
 if __name__ == "__main__":
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("  LogLight Field Masking Demonstration")
-    print("="*60)
+    print("=" * 60)
     print("\nAutomatic protection of sensitive data in logs!")
 
     # Run all demos
@@ -281,9 +298,8 @@ if __name__ == "__main__":
     demo_get_patterns()
     demo_all_strategies()
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("  ✅ All demonstrations complete!")
-    print("="*60)
+    print("=" * 60)
     print("\nFor more information, see: docs/MASKING.md")
     print("\n")
-

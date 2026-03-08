@@ -55,7 +55,7 @@ def test_log_level_filtering(capsys):
 
 def test_log_methods(capsys):
     config = LoggerConfig(level="DEBUG")
-    logger = Logger(config=config,handler=ConsoleHandler())
+    logger = Logger(config=config, handler=ConsoleHandler())
 
     logger.debug("debug_event")
     logger.info("info_event")
@@ -67,7 +67,13 @@ def test_log_methods(capsys):
 
     outputs = [line for line in captured.out.strip().split("\n") if line]
     expected_levels = ["debug", "info", "warning", "error", "critical"]
-    expected_messages = ["debug_event", "info_event", "warn_event", "error_event", "crit_event"]
+    expected_messages = [
+        "debug_event",
+        "info_event",
+        "warn_event",
+        "error_event",
+        "crit_event",
+    ]
 
     assert len(outputs) == len(expected_levels)
 
@@ -153,6 +159,7 @@ def test_rate_limit_zero(capsys):
 
 def test_request_context_inheritance(capsys):
     from loglight.logger import Logger
+
     config = LoggerConfig()
     logger = Logger(config=config, handler=ConsoleHandler())
 

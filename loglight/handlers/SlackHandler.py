@@ -1,12 +1,19 @@
-import sys
 import json
+import sys
 
 from loglight.handlers.BaseHandler import BaseHandler
 
 
 class SlackHandler(BaseHandler):
-    def __init__(self, webhook_url, channel=None, username="loglight", icon_emoji=":speech_balloon:", timeout=5,
-                 enable_internal_logging=True):
+    def __init__(
+        self,
+        webhook_url,
+        channel=None,
+        username="loglight",
+        icon_emoji=":speech_balloon:",
+        timeout=5,
+        enable_internal_logging=True,
+    ):
         super().__init__(enable_internal_logging)
         self.webhook_url = webhook_url
         self.channel = channel
@@ -15,9 +22,12 @@ class SlackHandler(BaseHandler):
         self.timeout = timeout
         try:
             import requests
+
             self.requests = requests
         except ImportError:
-            raise ImportError("requests is required for SlackHandler. Install with: pip install loglight[http]")
+            raise ImportError(
+                "requests is required for SlackHandler. Install with: pip install loglight[http]"
+            )
 
     def emit(self, log_str: str):
         try:
@@ -31,8 +41,11 @@ class SlackHandler(BaseHandler):
             if self.channel:
                 payload["channel"] = self.channel
 
-            response = self.requests.post(self.webhook_url, json=payload, timeout=self.timeout)
+            response = self.requests.post(
+                self.webhook_url, json=payload, timeout=self.timeout
+            )
             response.raise_for_status()
         except Exception as e:
-
-            self.log_internal_error("slack_emit_failed", e, context={"url": self.webhook_url})
+            self.log_internal_error(
+                "slack_emit_failed", e, context={"url": self.webhook_url}
+            )

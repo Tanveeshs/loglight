@@ -11,13 +11,18 @@ class WebhookHandler(BaseHandler):
         self.timeout = timeout
         try:
             import requests
+
             self.requests = requests
         except ImportError:
-            raise ImportError("requests is required for WebhookHandler. Install with: pip install loglight[http]")
+            raise ImportError(
+                "requests is required for WebhookHandler. Install with: pip install loglight[http]"
+            )
 
     def emit(self, log_str: str):
         try:
-            response = self.requests.post(self.url, data=log_str, headers=self.headers, timeout=self.timeout)
+            response = self.requests.post(
+                self.url, data=log_str, headers=self.headers, timeout=self.timeout
+            )
             response.raise_for_status()
         except Exception as e:
             self.log_internal_error("webhook_emit_failed", e, context={"url": self.url})

@@ -1,4 +1,5 @@
 import uuid
+
 from flask import g
 
 from loglight.logger import Logger
